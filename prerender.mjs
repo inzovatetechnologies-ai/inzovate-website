@@ -492,7 +492,7 @@ ${JSON.stringify(jsonLd, null, 2)}
     </div>
   `;
 
-  html = html.replace('<div id="root"></div>', `<div id="root">${semanticBody}</div>`);
+  html = html.replace('<div id="root"></div>', `<div id="root"></div>\n    <noscript>${semanticBody}</noscript>`);
   return html;
 }
 
