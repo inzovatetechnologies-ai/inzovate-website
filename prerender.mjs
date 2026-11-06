@@ -262,10 +262,25 @@ const PAGES = [
     description: 'Learn how Inzovate Technologies uses cookies and tracking technologies to improve user experience.'
   },
   {
+    route: '/crm-for-service-based-businesses',
+    title: 'CRM for Service-Based Businesses: Complete Guide | Inzovate Technologies',
+    heading: 'CRM for Service-Based Businesses: A Complete Guide',
+    description: 'Discover how CRM software helps service-based businesses manage leads, automate sales, improve customer relationships and grow revenue.',
+    image: '/crm-service-based-businesses.jpg',
+    features: [
+      'Centralized Customer Information Database',
+      'Automated Lead Tracking & Sales Pipelines',
+      'Smart Follow-Up Notifications & Reminders',
+      'Service Appointment & Consultation Scheduling',
+      'Custom CRM Implementation & Application Integration'
+    ]
+  },
+  {
     route: '/10-essential-crm-features-every-growing-business-needs-in-2026',
     title: '10 Essential CRM Features Every Growing Business Needs in 2026 | Inzovate',
     heading: '10 Essential CRM Features Every Growing Business Needs in 2026',
-    description: 'Explore the 10 essential CRM features every growing business needs in 2026, including lead tracking, sales pipelines, workflow automation, and custom CRM systems.'
+    description: 'Explore the 10 essential CRM features every growing business needs in 2026, including lead tracking, sales pipelines, workflow automation, and custom CRM systems.',
+    image: '/10-essential-crm-features-2026.jpg'
   },
   {
     route: '/how-to-implement-zoho-crm-for-a-small-business-a-practical-step-by-step-guide',
@@ -429,41 +444,41 @@ function generatePrerenderedHtml(baseTemplate, page) {
     <meta property="og:url" content="${fullUrl}" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="INZOVATE TECHNOLOGIES PRIVATE LIMITED" />
-    <meta property="og:image" content="${SITE_URL}/inzovate-logo.png" />
+    <meta property="og:image" content="${page.image ? `${SITE_URL}${page.image}` : `${SITE_URL}/inzovate-logo.png`}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${page.title}" />
     <meta name="twitter:description" content="${page.description}" />
-    <meta name="twitter:image" content="${SITE_URL}/inzovate-logo.png" />
+    <meta name="twitter:image" content="${page.image ? `${SITE_URL}${page.image}` : `${SITE_URL}/inzovate-logo.png`}" />
     <script type="application/ld+json">
 ${JSON.stringify(jsonLd, null, 2)}
     </script>
   `;
   html = html.replace('</head>', `${ogMetaTags}\n</head>`);
 
-  // Build semantic content for Googlebot & initial fallback render inside #root
+  // Build semantic content for Googlebot & initial fallback render inside #root (Pure White Luxury Theme)
   let semanticBody = `
-    <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 1200px; margin: 0 auto; padding: 40px 20px; color: #e2e8f0; background-color: #04070f; min-height: 100vh;">
+    <div style="font-family: 'Poppins', system-ui, -apple-system, sans-serif; max-width: 1200px; margin: 0 auto; padding: 40px 20px; color: #0f172a; background-color: #ffffff; min-height: 100vh;">
       <header>
         <nav style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; font-size: 0.95rem;">
-          <a href="/" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Home</a>
-          <a href="/about" style="color: #38bdf8; text-decoration: none; font-weight: 600;">About</a>
-          <a href="/services" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Services</a>
-          <a href="/products" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Products</a>
-          <a href="/locations" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Locations</a>
-          <a href="/blogs" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Blogs</a>
-          <a href="/contact" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Contact</a>
+          <a href="/" style="color: #1746a2; text-decoration: none; font-weight: 600;">Home</a>
+          <a href="/about" style="color: #1746a2; text-decoration: none; font-weight: 600;">About</a>
+          <a href="/services" style="color: #1746a2; text-decoration: none; font-weight: 600;">Services</a>
+          <a href="/products" style="color: #1746a2; text-decoration: none; font-weight: 600;">Products</a>
+          <a href="/locations" style="color: #1746a2; text-decoration: none; font-weight: 600;">Locations</a>
+          <a href="/blogs" style="color: #1746a2; text-decoration: none; font-weight: 600;">Blogs</a>
+          <a href="/contact" style="color: #1746a2; text-decoration: none; font-weight: 600;">Contact</a>
         </nav>
-        <h1 style="font-size: 2.2rem; font-weight: 800; color: #ffffff; margin-top: 20px; line-height: 1.2;">${page.heading}</h1>
+        <h1 style="font-size: 2.2rem; font-weight: 800; color: #0f172a; margin-top: 20px; line-height: 1.2;">${page.heading}</h1>
       </header>
       <main>
-        <p style="font-size: 1.15rem; line-height: 1.7; color: #94a3b8; margin-top: 16px;">${page.description}</p>
+        <p style="font-size: 1.15rem; line-height: 1.7; color: #475569; margin-top: 16px;">${page.description}</p>
   `;
 
   if (page.features && page.features.length > 0) {
     semanticBody += `
         <section style="margin-top: 30px;">
-          <h2 style="font-size: 1.5rem; font-weight: 700; color: #f8fafc;">Key Capabilities & Solutions</h2>
-          <ul style="padding-left: 20px; color: #cbd5e1; margin-top: 12px;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a;">Key Capabilities & Solutions</h2>
+          <ul style="padding-left: 20px; color: #334155; margin-top: 12px;">
             ${page.features.map((f) => `<li style="font-size: 1rem; margin-bottom: 8px;">${f}</li>`).join('')}
           </ul>
         </section>
@@ -472,21 +487,21 @@ ${JSON.stringify(jsonLd, null, 2)}
 
   if (page.address) {
     semanticBody += `
-        <section style="margin-top: 30px; background: #0f172a; border: 1px solid #1e293b; padding: 20px; border-radius: 8px;">
-          <h2 style="font-size: 1.3rem; font-weight: 700; color: #ffffff;">Office Address</h2>
-          <p style="color: #cbd5e1; margin-top: 8px;">${page.address}</p>
+        <section style="margin-top: 30px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px;">
+          <h2 style="font-size: 1.3rem; font-weight: 700; color: #0f172a;">Office Address</h2>
+          <p style="color: #475569; margin-top: 8px;">${page.address}</p>
         </section>
     `;
   }
 
   semanticBody += `
-        <section style="margin-top: 40px; padding: 30px; background: #0d1527; border: 1px solid #1e293b; color: #ffffff; border-radius: 12px;">
-          <h2 style="color: #ffffff; font-size: 1.5rem; font-weight: 700;">Ready to Scale Your Business?</h2>
-          <p style="color: #94a3b8; margin-top: 8px;">Partner with INZOVATE TECHNOLOGIES PRIVATE LIMITED for custom software engineering, AWS cloud, and Zoho CRM automation.</p>
-          <a href="/contact" style="display: inline-block; margin-top: 16px; background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 6px; font-weight: 700; text-decoration: none;">Get Technical Consultation</a>
+        <section style="margin-top: 40px; padding: 30px; background: #f8fafc; border: 1px solid #e2e8f0; color: #0f172a; border-radius: 12px;">
+          <h2 style="color: #0f172a; font-size: 1.5rem; font-weight: 700;">Ready to Scale Your Business?</h2>
+          <p style="color: #475569; margin-top: 8px;">Partner with INZOVATE TECHNOLOGIES PRIVATE LIMITED for custom software engineering, AWS cloud, and Zoho CRM automation.</p>
+          <a href="/contact" style="display: inline-block; margin-top: 16px; background: #1746a2; color: #ffffff; padding: 12px 24px; border-radius: 6px; font-weight: 700; text-decoration: none;">Get Technical Consultation</a>
         </section>
       </main>
-      <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #1e293b; font-size: 0.9rem; color: #64748b;">
+      <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 0.9rem; color: #64748b;">
         <p>&copy; ${new Date().getFullYear()} INZOVATE TECHNOLOGIES PRIVATE LIMITED. All rights reserved. | Headquarters: Bhavani, Tamil Nadu, India.</p>
       </footer>
     </div>
@@ -553,7 +568,7 @@ function generateSitemap(pages) {
     } else if (p.route.startsWith('/locations/')) {
       priority = '0.8';
       changefreq = 'monthly';
-    } else if (p.route.startsWith('/how-to-implement') || p.route.startsWith('/role-of-ai') || p.route.startsWith('/ai-automation')) {
+    } else if (p.route.startsWith('/how-to-implement') || p.route.startsWith('/role-of-ai') || p.route.startsWith('/ai-automation') || p.route.startsWith('/crm-for-service-based-businesses') || p.route.startsWith('/10-essential-crm-features')) {
       priority = '0.95';
       changefreq = 'weekly';
     }

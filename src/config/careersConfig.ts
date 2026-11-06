@@ -3,7 +3,7 @@
 export const CAREERS_CONFIG = {
   // EmailJS Credentials
   EMAILJS_SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || "service_Inzovate",
-  EMAILJS_TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "template_kkp1vqc",
+  EMAILJS_TEMPLATE_ID: import.meta.env.VITE_EMAILJS_CAREERS_TEMPLATE_ID || "template_kkp1vqc",
   EMAILJS_PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "8uL8PikwPewH6Sm9V",
 
   // Google Sheets Apps Script Web App URL

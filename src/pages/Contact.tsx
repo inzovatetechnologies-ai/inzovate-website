@@ -16,8 +16,6 @@ import {
   HelpCircle,
   MessageSquare,
   Sparkles,
-  Upload,
-  FileText,
 } from "lucide-react";
 import { sendUnifiedEmail } from "../services/emailService";
 import InzovateConciergeVisual from "../components/InzovateConciergeVisual";
@@ -50,10 +48,13 @@ function FadeIn({
 const inquiryCategories = [
   "Services Request (Software, Cloud, AI, Security)",
   "Product Inquiry / Demo (ERP, CRM, Billing)",
-  "Careers / Job Application",
   "Strategic Partnership",
-  "General Inquiry / Support",
 ];
+
+const getWordCount = (text: string) => {
+  const trimmed = text.trim();
+  return trimmed ? trimmed.split(/\s+/).length : 0;
+};
 
 const locations = [
   {
@@ -130,8 +131,6 @@ export default function Contact() {
     subject: "",
     message: "",
   });
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [resumeDataUrl, setResumeDataUrl] = useState<string>("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -190,35 +189,17 @@ export default function Contact() {
     };
   }, []);
 
-  const isCareerCategory =
-    form.service.toLowerCase().includes("career") ||
-    form.service.toLowerCase().includes("job");
-
-  const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({ ...prev, resume: "File size exceeds 5MB limit" }));
-        return;
-      }
-      setResumeFile(file);
-      setErrors((prev) => ({ ...prev, resume: "" }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setResumeDataUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const validate = () => {
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = "Required";
     if (!form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) e.email = "Valid email required";
     if (!form.service.trim()) e.service = "Required - Please select an inquiry purpose";
-    if (!form.message.trim()) e.message = "Required";
-    if (isCareerCategory && !resumeFile) {
-      e.resume = "Required - Please upload your resume (PDF/DOC)";
+    
+    const wordCount = getWordCount(form.message);
+    if (!form.message.trim()) {
+      e.message = "Required";
+    } else if (wordCount > 50) {
+      e.message = "Message must not exceed 50 words";
     }
     return e;
   };
@@ -234,20 +215,20 @@ export default function Contact() {
     setStatus("loading");
 
     const success = await sendUnifiedEmail({
-      form_type: isCareerCategory ? "Job Application" : "Let's Talk Inquiry",
+      form_type: "Let's Talk Inquiry",
       full_name: form.name,
       company_name: form.company,
       email: form.email,
       phone: form.phone,
       inquiry_purpose: form.service,
-      subject: form.subject || (isCareerCategory ? `Job Application from ${form.name}` : `Inquiry: ${form.service}`),
+      subject: form.subject || `Inquiry: ${form.service}`,
       message: form.message,
       product: "",
       service: form.service,
       company_size: "",
-      resume_file_name: resumeFile ? resumeFile.name : "None",
-      resume_file_size: resumeFile ? `${(resumeFile.size / 1024).toFixed(1)} KB` : "N/A",
-      resume_url_or_data: resumeDataUrl || "None",
+      resume_file_name: "None",
+      resume_file_size: "N/A",
+      resume_url_or_data: "None",
     });
 
     if (success) {
@@ -261,8 +242,6 @@ export default function Contact() {
         subject: "",
         message: "",
       });
-      setResumeFile(null);
-      setResumeDataUrl("");
     } else {
       setStatus("error");
     }
@@ -441,7 +420,7 @@ export default function Contact() {
                           }}
                         >
                           <option value="" className="text-slate-400">
-                            Select category (Services, Product, Job, etc.)
+                            Select category (Services, Product, Partnership)
                           </option>
                           {inquiryCategories.map((c) => (
                             <option key={c} value={c} className="text-slate-800">
@@ -457,74 +436,35 @@ export default function Contact() {
                       {field("subject", "Subject", "text", "How can we help you?", false, HelpCircle, "subject")}
                     </div>
 
-                    {/* Dynamic Resume Upload Field for Careers & Job Applications */}
-                    {isCareerCategory && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className="space-y-1.5 p-4 rounded-xl border border-emerald-200 bg-emerald-50/60 services-fade-down services-delay-3"
-                      >
-                        <label className="flex items-center gap-1.5 text-[13px] font-semibold text-emerald-800">
-                          <Upload className="w-4 h-4 text-emerald-600" />
-                          <span>Upload Resume / CV</span>
-                          <span className="text-red-500">*</span>
-                          <span className="text-[11px] text-slate-500 font-normal ml-auto">(PDF, DOC, DOCX - Max 5MB)</span>
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="file"
-                            id="resume_upload"
-                            accept=".pdf,.doc,.docx"
-                            onChange={handleResumeChange}
-                            className="hidden"
-                          />
-                          <label
-                            htmlFor="resume_upload"
-                            className={`flex items-center justify-between px-4 py-3.5 rounded-xl border border-dashed text-sm cursor-pointer transition-all duration-200 bg-white ${
-                              errors.resume
-                                ? "border-red-400 bg-red-50/50 text-red-600"
-                                : resumeFile
-                                ? "border-emerald-500 bg-emerald-50 text-emerald-900"
-                                : "border-slate-300 text-slate-700 hover:border-emerald-500 hover:bg-slate-50"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3 overflow-hidden">
-                              <FileText className={`w-5 h-5 flex-shrink-0 ${resumeFile ? "text-emerald-600" : "text-slate-400"}`} />
-                              <span className="truncate font-medium text-slate-800">
-                                {resumeFile ? `${resumeFile.name} (${(resumeFile.size / 1024).toFixed(1)} KB)` : "Click here to choose your Resume file"}
-                              </span>
-                            </div>
-                            <span className="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-100 text-emerald-700 border border-emerald-300 flex-shrink-0 ml-2">
-                              {resumeFile ? "Change File" : "Browse"}
-                            </span>
-                          </label>
-                        </div>
-                        {errors.resume && (
-                          <p className="text-[11.5px] font-semibold text-red-500 mt-1">{errors.resume}</p>
-                        )}
-                        {resumeFile && (
-                          <p className="text-[11px] text-emerald-700 font-medium">
-                            ✓ Resume attached. Your application will be routed directly to HR (`inzovatetech@gmail.com`).
-                          </p>
-                        )}
-                      </motion.div>
-                    )}
-
-                    {/* Message Textarea */}
+                    {/* Message Textarea (50 Word Limit) */}
                     <div className="space-y-1.5 services-fade-down services-delay-3">
-                      <label className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-700" htmlFor="message">
-                        <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
-                        <span>Message</span>
-                        <span className="text-red-500">*</span>
-                      </label>
+                      <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-700" htmlFor="message">
+                          <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
+                          <span>Message</span>
+                          <span className="text-red-500">*</span>
+                        </label>
+                        <span className={`text-[11.5px] font-medium ${getWordCount(form.message) >= 50 ? "text-amber-600 font-semibold" : "text-slate-500"}`}>
+                          {getWordCount(form.message)} / 50 words
+                        </span>
+                      </div>
                       <textarea
                         id="message"
                         name="message"
                         rows={4}
-                        placeholder="Tell us about your project or challenge..."
+                        placeholder="Tell us about your requirements (maximum 50 words)..."
                         value={form.message}
-                        onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const words = val.trim() ? val.trim().split(/\s+/) : [];
+                          if (words.length <= 50) {
+                            setForm((f) => ({ ...f, message: val }));
+                          } else {
+                            // Enforce strict 50 words limit
+                            const truncated = words.slice(0, 50).join(" ");
+                            setForm((f) => ({ ...f, message: truncated }));
+                          }
+                        }}
                         className={`w-full px-4 py-3.5 rounded-xl text-sm text-[#0F172A] placeholder:text-slate-400 bg-white border ${
                           errors.message
                             ? "border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"

@@ -91,6 +91,85 @@ app.get("/api/seo/categories", (req, res) => {
   });
 });
 
+// ── Backend Blog Metadata Endpoints ─────────────────────────────────────────
+const BLOGS_DATA = [
+  {
+    id: "10-essential-crm-features-2026",
+    slug: "10-essential-crm-features-every-growing-business-needs-in-2026",
+    title: "10 Essential CRM Features Every Growing Business Needs in 2026",
+    metaTitle: "10 Essential CRM Features Every Growing Business Needs in 2026 | Inzovate",
+    metaDescription:
+      "Explore the 10 essential CRM features every growing business needs in 2026. Learn how lead tracking, sales pipelines, workflow automation, and custom CRM systems drive growth.",
+    urlSlug: "10-essential-crm-features-every-growing-business-needs-in-2026",
+    date: "October 16 2026",
+    image: "/10-essential-crm-features-2026.jpg",
+    primaryFocusKeyword: "10 essential CRM features every growing business needs in 2026",
+    secondaryKeywords: [
+      "CRM software for small businesses",
+      "customer relationship management",
+      "sales pipeline management",
+      "CRM automation",
+      "centralized customer database",
+      "CRM reporting and analytics",
+      "CRM email integration",
+      "CRM task management",
+      "custom CRM solutions"
+    ],
+    longTailKeywords: [
+      "essential CRM features for growing businesses",
+      "best CRM features for small business growth",
+      "how CRM automation improves sales in 2026",
+      "sales pipeline tracking for growing companies"
+    ]
+  },
+  {
+    id: "crm-for-service-based-businesses",
+    slug: "crm-for-service-based-businesses",
+    title: "CRM for Service-Based Businesses: A Complete Guide",
+    metaTitle: "CRM for Service-Based Businesses: Complete Guide",
+    metaDescription:
+      "Discover how CRM software helps service-based businesses manage leads, automate sales, improve customer relationships and grow revenue.",
+    urlSlug: "crm-for-service-based-businesses",
+    date: "October 30 2026",
+    image: "/crm-service-based-businesses.jpg",
+    primaryFocusKeyword: "CRM for service-based businesses",
+    secondaryKeywords: [
+      "CRM software for service businesses",
+      "Customer relationship management software",
+      "CRM solutions for small businesses",
+      "CRM implementation services",
+      "CRM automation for businesses",
+      "Sales pipeline management software",
+      "Lead management software",
+      "Customer management system",
+      "CRM customization services",
+      "Business process automation"
+    ],
+    longTailKeywords: [
+      "Best CRM software for service-based companies",
+      "How CRM helps service-based businesses grow",
+      "Benefits of CRM software for small businesses",
+      "How to automate customer management using CRM"
+    ]
+  }
+];
+
+app.get(["/api/blogs", "/api/blog/metadata"], (req, res) => {
+  res.json({
+    success: true,
+    count: BLOGS_DATA.length,
+    blogs: BLOGS_DATA
+  });
+});
+
+app.get("/api/blogs/:slug", (req, res) => {
+  const blog = BLOGS_DATA.find((b) => b.slug === req.params.slug || b.id === req.params.slug);
+  if (!blog) {
+    return res.status(404).json({ success: false, error: "Blog not found" });
+  }
+  res.json({ success: true, blog });
+});
+
 // ── Send Free Trial & Pricing Direct Emails Endpoint ─────────────────────────
 app.post("/api/send-trial-emails", async (req, res) => {
   try {
@@ -458,9 +537,25 @@ Message:
 ${messageContent}
     `.trim();
 
+    const targetRecipient = payload.destination_email || payload.target_email || payload.recipient_email || payload.to_email || "inzovatetechnologies@gmail.com";
+
+    const attachments = [];
+    if (payload.attachments && Array.isArray(payload.attachments)) {
+      attachments.push(...payload.attachments);
+    } else if (payload.resume_base64) {
+      const cleanBase64 = payload.resume_base64.includes(",")
+        ? payload.resume_base64.split(",")[1]
+        : payload.resume_base64;
+      const fileName = payload.resume_file_name || "Resume.pdf";
+      attachments.push({
+        filename: fileName,
+        content: Buffer.from(cleanBase64, "base64"),
+      });
+    }
+
     const mailOptions = {
       from: `"Inzovate Web System" <inzovatetech@gmail.com>`,
-      to: "inzovatetechnologies@gmail.com",
+      to: targetRecipient,
       replyTo: userEmail,
       subject: subject,
       text: plainText,
@@ -469,6 +564,13 @@ ${messageContent}
         "X-Priority": "3",
       },
     };
+
+    if (payload.html) {
+      mailOptions.html = payload.html;
+    }
+    if (attachments.length > 0) {
+      mailOptions.attachments = attachments;
+    }
 
     const info = await websiteTransporter.sendMail(mailOptions);
     return res.json({ success: true, messageId: info.messageId });

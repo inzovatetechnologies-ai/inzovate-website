@@ -174,5 +174,36 @@ export async function processUpiMandateRegistration(
     console.error("[Direct SMTP Engine] Dispatch error:", smtpErr);
   }
 
+  // 4. Dispatch Pricing Registration to Google Apps Script & Google Sheets
+  const webAppUrl =
+    import.meta.env.VITE_GOOGLE_SHEETS_WEB_APP_URL ||
+    "https://script.google.com/macros/s/AKfycbwX8iewsLMETb70RU5prdserHGp87jr3FNTuk46_GK0lLAJYcxs2gtTlwbIDZf4fSwzgA/exec";
+
+  if (webAppUrl && webAppUrl !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
+    try {
+      await fetch(webAppUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "submit_pricing_trial",
+          target_email: "inzovatetechnologies@gmail.com",
+          full_name: customer.fullName,
+          email_address: customer.email,
+          phone_number: `${customer.countryCode} ${customer.phone}`,
+          plan_name: customer.planName,
+          plan_price: customer.planPrice,
+          trial_days: customer.trialDays,
+          mandate_id: receipt.mandateId,
+          payment_method: receipt.paymentMethod,
+          send_email: true,
+        }),
+      });
+      console.log("✅ [Google Apps Script] Pricing trial registration dispatched successfully.");
+    } catch (gErr) {
+      console.error("[Google Apps Script] Pricing dispatch error:", gErr);
+    }
+  }
+
   return receipt;
 }

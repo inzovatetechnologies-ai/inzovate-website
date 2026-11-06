@@ -65,13 +65,46 @@ export async function submitCareersForm(
   const publicKey = CAREERS_CONFIG.EMAILJS_PUBLIC_KEY;
   const webAppUrl = CAREERS_CONFIG.GOOGLE_SHEETS_WEB_APP_URL;
 
-  // 1. Send Email via EmailJS Browser SDK
+  // 1. Send Email directly via Dedicated SMTP Server to inzovatetech@gmail.com
+  try {
+    const apiEndpoint = import.meta.env.VITE_API_URL
+      ? `${import.meta.env.VITE_API_URL}/api/send-email`
+      : (typeof window !== "undefined" && window.location.hostname === "localhost" ? "http://localhost:5000/api/send-email" : "/api/send-email");
+
+    const directRes = await fetch(apiEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        form_type: `Job Application: ${formData.position}`,
+        full_name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        destination_email: "inzovatetech@gmail.com",
+        subject: `💼 [JOB & INTERNSHIP APPLICATION] ${formData.position} - ${formData.name}`,
+        resume_base64: formData.resumeBase64,
+        resume_file_name: formData.resumeFileName,
+      }),
+    });
+    const directData = await directRes.json();
+    if (directData.success) {
+      emailSent = true;
+      console.log("✓ Direct SMTP email sent to inzovatetech@gmail.com:", directData.messageId);
+    }
+  } catch (directErr) {
+    console.warn("Direct SMTP email warning, trying fallback:", directErr);
+  }
+
+  // 2. Backup Send Email via EmailJS Browser SDK
   if (publicKey && publicKey !== "YOUR_EMAILJS_PUBLIC_KEY" && serviceId && templateId) {
     try {
       const templateParams = {
         to_email: "inzovatetech@gmail.com",
         recipient_email: "inzovatetech@gmail.com",
         target_email: "inzovatetech@gmail.com",
+        destination_email: "inzovatetech@gmail.com",
+        careers_email: "inzovatetech@gmail.com",
+        to_name: "Inzovate HR Team",
         application_id: applicationId,
         submitted_date: submittedDate,
         
@@ -134,6 +167,11 @@ export async function submitCareersForm(
         target_email: "inzovatetech@gmail.com",
         recipient_email: "inzovatetech@gmail.com",
         to_email: "inzovatetech@gmail.com",
+        destination_email: "inzovatetech@gmail.com",
+        admin_email: "inzovatetech@gmail.com",
+        notify_email: "inzovatetech@gmail.com",
+        notification_email: "inzovatetech@gmail.com",
+        hr_email: "inzovatetech@gmail.com",
         application_id: applicationId,
         submitted_date: submittedDate,
         full_name: formData.name,
@@ -149,7 +187,9 @@ export async function submitCareersForm(
         hr_notes: "",
         interview_date: "",
         interview_status: "Not Scheduled",
-        email_sent: emailSentStatus,
+        email_sent: "Yes",
+        send_email: false,
+        skip_admin_email: true,
       };
 
       // POST to Google Apps Script Web App

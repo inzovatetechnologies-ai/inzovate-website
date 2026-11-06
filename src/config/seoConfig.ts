@@ -44,8 +44,8 @@ export const SEO_CONFIG = {
 
   // Primary Contact Details (Verified Records)
   phone: "+91 9342008797",
-  email: "inzovatetech@gmail.com",
-  careersEmail: "inzovatetechnologies@gmail.com",
+  email: "inzovatetechnologies@gmail.com",
+  careersEmail: "inzovatetech@gmail.com",
   workingHours: "Mon - Fri: 9:00 AM - 6:00 PM IST",
 
   // Verified Business Locations (Primary HQ & Regional Delivery Hubs)

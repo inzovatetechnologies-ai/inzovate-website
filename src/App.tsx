@@ -158,6 +158,14 @@ function BlogPostRedirect() {
       />
     );
   }
+  if (postSlug === "crm-for-service-based-businesses") {
+    return (
+      <Navigate
+        to="/crm-for-service-based-businesses"
+        replace
+      />
+    );
+  }
   return <Blog />;
 }
 
@@ -189,6 +197,7 @@ function Layout() {
             <Route path="/blog" element={<Navigate to="/blogs" replace />} />
             <Route path="/blogs/:postSlug" element={<BlogPostRedirect />} />
             <Route path="/blog/:postSlug" element={<BlogPostRedirect />} />
+            <Route path="/crm-for-service-based-businesses" element={<Blog />} />
             <Route path="/10-essential-crm-features-every-growing-business-needs-in-2026" element={<Blog />} />
             <Route path="/10-essential-crm-features-2026" element={<Navigate to="/10-essential-crm-features-every-growing-business-needs-in-2026" replace />} />
             <Route path="/crm-software-growing-businesses-construction-transport-publishing" element={<Blog />} />

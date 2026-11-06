@@ -622,15 +622,15 @@ export default function FreeTrialModal({ open, onClose, selectedPlan }: Props) {
                         className="overflow-hidden"
                       >
                         <div
-                          className="p-3.5 rounded-xl border text-xs space-y-2 shadow-inner"
-                          style={{ background: "#0e111a", borderColor: C.border }}
+                          className="p-3.5 rounded-xl border text-xs space-y-2 shadow-sm"
+                          style={{ background: "#F8FAFC", borderColor: C.border }}
                         >
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                            <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: C.textSec }}>
                               Password Requirements:
                             </span>
                             {isPasswordValid && (
-                              <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                              <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
                                 <Check size={11} strokeWidth={3} /> All criteria satisfied
                               </span>
                             )}
@@ -641,35 +641,35 @@ export default function FreeTrialModal({ open, onClose, selectedPlan }: Props) {
                               style={{ color: pwCriteria.minLen ? C.success : C.textSec }}
                             >
                               <Check size={12} strokeWidth={pwCriteria.minLen ? 3 : 1.5} />
-                              <span>8+ Characters</span>
+                              <span className={pwCriteria.minLen ? "font-medium" : ""}>8+ Characters</span>
                             </div>
                             <div
                               className="flex items-center gap-1.5 transition-colors"
                               style={{ color: pwCriteria.hasUpper ? C.success : C.textSec }}
                             >
                               <Check size={12} strokeWidth={pwCriteria.hasUpper ? 3 : 1.5} />
-                              <span>1 Uppercase (A-Z)</span>
+                              <span className={pwCriteria.hasUpper ? "font-medium" : ""}>1 Uppercase (A-Z)</span>
                             </div>
                             <div
                               className="flex items-center gap-1.5 transition-colors"
                               style={{ color: pwCriteria.hasLower ? C.success : C.textSec }}
                             >
                               <Check size={12} strokeWidth={pwCriteria.hasLower ? 3 : 1.5} />
-                              <span>1 Lowercase (a-z)</span>
+                              <span className={pwCriteria.hasLower ? "font-medium" : ""}>1 Lowercase (a-z)</span>
                             </div>
                             <div
                               className="flex items-center gap-1.5 transition-colors"
                               style={{ color: pwCriteria.hasNumber ? C.success : C.textSec }}
                             >
                               <Check size={12} strokeWidth={pwCriteria.hasNumber ? 3 : 1.5} />
-                              <span>1 Number (0-9)</span>
+                              <span className={pwCriteria.hasNumber ? "font-medium" : ""}>1 Number (0-9)</span>
                             </div>
                             <div
                               className="flex items-center gap-1.5 transition-colors col-span-2"
                               style={{ color: pwCriteria.hasSpecial ? C.success : C.textSec }}
                             >
                               <Check size={12} strokeWidth={pwCriteria.hasSpecial ? 3 : 1.5} />
-                              <span>1 Special Character (!@#$%^&*...)</span>
+                              <span className={pwCriteria.hasSpecial ? "font-medium" : ""}>1 Special Character (!@#$%^&*...)</span>
                             </div>
                           </div>
                         </div>
@@ -705,7 +705,7 @@ export default function FreeTrialModal({ open, onClose, selectedPlan }: Props) {
                       }}
                     >
                       {COUNTRIES.map((c, i) => (
-                        <option key={i} value={c.code} style={{ background: "#0f1523" }}>
+                        <option key={i} value={c.code} style={{ background: "#FFFFFF", color: C.textPrim }}>
                           {c.name} ({c.code})
                         </option>
                       ))}
